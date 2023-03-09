@@ -1,0 +1,22 @@
+from flask import Flask, render_template
+import sqlite3
+
+app = Flask(__name__)
+
+@app.route("/")
+def index():
+    # Crear la conexión a la base de datos
+    conn = sqlite3.connect("ejemplo.db")
+    # Crear la tabla si no existe
+    conn.execute("CREATE TABLE IF NOT EXISTS usuarios (id INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT)")
+    # Insertar algunos datos
+    conn.execute("INSERT INTO usuarios (nombre) VALUES ('Juan')")
+    conn.execute("INSERT INTO usuarios (nombre) VALUES ('María')")
+    conn.execute("INSERT INTO usuarios (nombre) VALUES ('Pedro')")
+    # Hacer una consulta y obtener los datos
+    cursor = conn.execute("SELECT * FROM usuarios")
+    usuarios = cursor.fetchall()
+    # Cerrar la conexión
+    conn.close()
+    # Mostrar los datos en una plantilla HTML
+    return render_template("usuarios.html", usuarios=usuarios)
